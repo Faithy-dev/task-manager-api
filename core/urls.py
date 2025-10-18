@@ -3,11 +3,13 @@ from django.urls import path, include
 from django.shortcuts import redirect
 from rest_framework import routers
 from tasks.views import UserViewSet, TaskViewSet
+from tasks.views import UserViewSet, TaskViewSet, CategoryViewSet 
 
 # DRF router for users and tasks
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'tasks', TaskViewSet, basename='task')
+router.register(r'categories', CategoryViewSet, basename='category')
 
 # Root URL redirects to /api/
 def home(request):

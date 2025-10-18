@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Task
 from django.utils import timezone
+from .models import Task, Category
 
 # User serializer for registration
 class UserSerializer(serializers.ModelSerializer):
@@ -35,3 +36,8 @@ class TaskSerializer(serializers.ModelSerializer):
         if value <= timezone.now():
             raise serializers.ValidationError("Due date must be in the future.")
         return value
+ 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
