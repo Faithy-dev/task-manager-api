@@ -1,22 +1,31 @@
+# core/urls.py
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
 from rest_framework import routers
-from tasks.views import UserViewSet, TaskViewSet
-from tasks.views import UserViewSet, TaskViewSet, CategoryViewSet 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from tasks.views import UserViewSet, TaskViewSet, CategoryViewSet, TaskHistoryViewSet
 
-# DRF router for users and tasks
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'tasks', TaskViewSet, basename='task')
 router.register(r'categories', CategoryViewSet, basename='category')
+router.register(r'task-history', TaskHistoryViewSet, basename='task-history')
 
-# Root URL redirects to /api/
-def home(request):
-    return redirect('/api/')
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def public_api_root(request):
+    return Response({
+        'users': request.build_absolute_uri('/api/users/'),
+        'tasks': request.build_absolute_uri('/api/tasks/'),
+        'categories': request.build_absolute_uri('/api/categories/'),
+        'task-history': request.build_absolute_uri('/api/task-history/'),
+    })
 
 urlpatterns = [
-    path('', home),  # Redirect root to API
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('', public_api_root, name='public-api-root'),
+    path('api-auth/', include('rest_framework.urls')),
 ]
